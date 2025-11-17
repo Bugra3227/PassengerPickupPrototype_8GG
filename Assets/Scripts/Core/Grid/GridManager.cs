@@ -198,6 +198,20 @@ public class GridManager : MonoBehaviour
         Vector3 local = new Vector3(_offsetX + x * cellSize, 0f, _offsetZ + y * cellSize);
         return transform.position + local;
     }
+    public bool IsCellBlocked(Vector2Int cell)
+    {
+        if (LevelData == null)
+            return false;
+
+        var blocks = LevelData.Blocks;
+        for (int i = 0; i < blocks.Count; i++)
+        {
+            if (blocks[i].cell == cell)
+                return true;
+        }
+
+        return false;
+    }
 
     public Vector2Int WorldToGrid(Vector3 worldPos)
     {

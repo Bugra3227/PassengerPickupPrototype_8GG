@@ -8,14 +8,13 @@ using UnityEditor;
 public class BusesLevelAuthoring : MonoBehaviour
 {
     [SerializeField] private LevelData levelData;
-    [SerializeField] private GridManager gridManager;
     [SerializeField] private Transform busesRoot;
 
 #if UNITY_EDITOR
     [ContextMenu("Bake Buses From Scene")]
     private void BakeBusesFromScene()
     {
-        if (levelData == null || gridManager == null || busesRoot == null)
+        if (levelData == null || busesRoot == null)
         {
             Debug.LogError("BusesLevelAuthoring: refs missing", this);
             return;
@@ -25,19 +24,16 @@ public class BusesLevelAuthoring : MonoBehaviour
 
         foreach (Transform child in busesRoot)
         {
-            BusAuthoring bus = child.GetComponent<BusAuthoring>();
-            if (bus == null)
+            BusAuthoring a = child.GetComponent<BusAuthoring>();
+            if (a == null)
                 continue;
-
-            Vector2Int cell = gridManager.WorldToGrid(child.position);
 
             LevelData.BusData data = new LevelData.BusData
             {
-                cell = cell,
-                length = bus.InitialLength,
-                color = bus.Color,
-                rotationY = child.eulerAngles.y
+                color = a.Color,
+                cells = a.GetCells()
             };
+
 
             list.Add(data);
         }
@@ -45,6 +41,8 @@ public class BusesLevelAuthoring : MonoBehaviour
         levelData.SetBuses(list);
         EditorUtility.SetDirty(levelData);
         AssetDatabase.SaveAssets();
+
+        Debug.Log($"Buses baked: {list.Count}");
     }
 #endif
 }
