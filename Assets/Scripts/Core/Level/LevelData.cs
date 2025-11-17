@@ -42,11 +42,11 @@ public class LevelData : ScriptableObject
     [Serializable]
     public class BusData
     {
-        public Vector2Int cell;
-        public int length;
         public BusColor color;
-        public float rotationY;
+        public List<Vector2Int> cells = new List<Vector2Int>();
+        public float rotationY; 
     }
+
 
 
     [SerializeField] private int width = 5;

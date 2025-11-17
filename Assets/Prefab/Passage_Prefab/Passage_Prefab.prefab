@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2411604427863850942}
   - component: {fileID: 6699881532812101459}
+  - component: {fileID: 6021025111245712674}
   m_Layer: 0
   m_Name: Passage_Prefab
   m_TagString: Untagged
@@ -31,6 +32,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2377753183477477183}
+  - {fileID: 2723550745306900454}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &6699881532812101459
@@ -47,6 +49,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 1
   objectId: 0
+--- !u!114 &6021025111245712674
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2228717126294486946}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba7b119bc496d3f499a89f445d48ae72, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  passageData:
+    coloredPassageCounts: []
+  passengerPrefab: {fileID: 4835498152072127482, guid: afe67d88db1153b4dbea0c4593a50b60, type: 3}
+  spawnRoot: {fileID: 2723550745306900454}
+  spawnOffset: {x: 0, y: 0, z: -0.25}
 --- !u!1 &3204214427957676724
 GameObject:
   m_ObjectHideFlags: 0
@@ -77,6 +96,37 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4524071982532602649}
+  m_Father: {fileID: 2411604427863850942}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &5257849234383896143
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2723550745306900454}
+  m_Layer: 0
+  m_Name: Passnger_SpawnPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2723550745306900454
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5257849234383896143}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -0.482}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
   m_Father: {fileID: 2411604427863850942}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &4125862419989417202
