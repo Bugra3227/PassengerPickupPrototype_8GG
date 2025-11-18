@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 
 public class PassageController : MonoBehaviour
 {
-    [SerializeField] private PassageData passageData;
-    [SerializeField] private GameObject passengerPrefab;
+    [Header("Passage Data Settings")] [SerializeField]
+    private PassageData passageData;
+
+    [SerializeField] private Passenger passengerPrefab;
 
     [Header("Spawn Settings")] [SerializeField]
     private Transform spawnRoot;
@@ -13,6 +16,8 @@ public class PassageController : MonoBehaviour
     [SerializeField] private Vector3 spawnOffset = new Vector3(0, 0, -1f);
 
     private BusAndPassageColorManager _busAndPassageColorManager;
+    private readonly List<Passenger> _spawnedPassengers = new List<Passenger>();
+    public PassageData Data => passageData;
 
     [Serializable]
     public struct ColoredPassageCount
@@ -27,15 +32,31 @@ public class PassageController : MonoBehaviour
         public List<ColoredPassageCount> coloredPassageCounts = new List<ColoredPassageCount>();
     }
 
-    private void Start()
+
+    public void InitializeFromData(LevelData.PassengerSpawnData data)
     {
         _busAndPassageColorManager = BusAndPassageColorManager.Instance;
 
-        if (passengerPrefab == null || spawnRoot == null || _busAndPassageColorManager == null)
+
+        transform.position = data.spawnPosition;
+        transform.rotation = data.spawnRotation;
+
+
+        passageData = new PassageData
         {
-            Debug.LogError("Passenger Prefab, Miss Spawn Root!");
-            return;
+            coloredPassageCounts = new List<ColoredPassageCount>()
+        };
+
+        for (int i = 0; i < data.groups.Count; i++)
+        {
+            var p = data.groups[i];
+            passageData.coloredPassageCounts.Add(new ColoredPassageCount
+            {
+                passageColor = p.color,
+                passageCount = p.count
+            });
         }
+
 
         SpawnPassengers();
     }
@@ -43,33 +64,66 @@ public class PassageController : MonoBehaviour
     private void SpawnPassengers()
     {
         Vector3 currentSpawnPosition = spawnRoot.position;
-
+        _spawnedPassengers.Clear();
 
         foreach (var group in passageData.coloredPassageCounts)
         {
             Color targetColor = _busAndPassageColorManager.GetColor(group.passageColor);
 
-
             for (int i = 0; i < group.passageCount; i++)
             {
-                GameObject newPassenger = Instantiate(
+                Passenger newPassenger = Instantiate(
                     passengerPrefab,
                     currentSpawnPosition,
                     Quaternion.identity,
                     spawnRoot
                 );
 
+                newPassenger.InitializePassengerColor(group.passageColor, targetColor);
+                _spawnedPassengers.Add(newPassenger);
 
-                ApplyColorToPassenger(newPassenger, targetColor);
                 currentSpawnPosition -= spawnOffset;
             }
         }
     }
 
-    private void ApplyColorToPassenger(GameObject passenger, Color color)
+    public Passenger GetNextPassengerForColor(BusAndPassageColorManager.BusPassageColors colorType)
     {
-        Renderer renderer = passenger.GetComponentInChildren<Renderer>();
-        renderer.material = new Material(renderer.material);
-        renderer.material.color = color;
+        if (_spawnedPassengers.Count == 0)
+            return null;
+
+
+        Passenger frontPassenger = _spawnedPassengers[0];
+
+
+        if (frontPassenger.PassageColorType == colorType)
+        {
+            _spawnedPassengers.RemoveAt(0);
+
+
+            RebuildQueuePositions();
+
+            return frontPassenger;
+        }
+
+
+        return null;
+    }
+
+    private void RebuildQueuePositions()
+    {
+        Vector3 currentTargetPos = spawnRoot.position;
+
+
+        for (int i = 0; i < _spawnedPassengers.Count; i++)
+        {
+            Passenger passenger = _spawnedPassengers[i];
+
+            passenger.transform.DOKill();
+
+            passenger.transform.DOMove(currentTargetPos, 0.5f)
+                .SetEase(Ease.InQuad);
+            currentTargetPos -= spawnOffset;
+        }
     }
 }

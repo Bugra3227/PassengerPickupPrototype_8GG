@@ -1,62 +1,114 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Serialization;
-
-[System.Serializable]
-public struct BusSegmentData
-{
-     public Vector2Int gridPosition;
-}
 
 public class BusMovement : MonoBehaviour
 {
-    [Header("Bus Prefabs")]
-    [SerializeField] private Transform existingHeadTransform;
-    [SerializeField] private GameObject segmentPrefab;
+    public bool IsDragging => _dragging;
+
+    public bool IsBlockMove
+    {
+        get => _isBlockMove;
+        set => _isBlockMove = value;
+    }
+
+    [Header("Refs")] [SerializeField] private Transform headTransform;
     [SerializeField] private Transform segmentRoot;
+    [SerializeField] private BusSeats busSeats;
+    [SerializeField] private BusConfig busConfig;
 
-    [Header("Initial Setup")]
-    [SerializeField] private List<BusSegmentData> initialSegments = new List<BusSegmentData>();
-
-    [Header("Appearance")]
-    [SerializeField] private Color busColor;
-
-    [Header("Movement Settings")]
-    [SerializeField] private float dragLerp = 15f;
+    [Header("Movement")] [SerializeField] private float dragLerp = 15f;
     [SerializeField] private float stepInterval = 0.06f;
 
-    [Header("Collision")]
-    [SerializeField] private LayerMask blockMask;
+    [Header("Collision")] [SerializeField] private LayerMask blockMask;
     [SerializeField] private float blockCheckRadius = 0.3f;
 
-    private GridManager _gridManager;
-    private Camera _camera;
-    private Plane _dragPlane;
 
+    private GridManager _gridManager;
+    private Camera _cam;
+    private Plane _dragPlane;
+    private bool _isBlockMove;
     private bool _dragging;
-    private readonly List<Vector2Int> _cells = new List<Vector2Int>();
-    private readonly List<Transform> _segmentTransforms = new List<Transform>();
+    private readonly List<Vector2Int> _cells = new(); // world cell positions (head -> tail)
+    private readonly List<Transform> _segments = new(); // head + tails
 
     private Vector2Int _pointerTargetCell;
     private float _stepTimer;
 
-    private void Start()
+
+// Initializes the bus's position, segments, and color based on the level data.
+    public void InitializeFromData(LevelData.BusData data)
     {
-        _camera = Camera.main;
+        _cam = Camera.main;
         _gridManager = GridManager.Instance;
 
-        if (_gridManager == null || existingHeadTransform == null)
-            return;
 
-        Vector2Int initialHeadCell = SnapHeadToGrid();
-        InitializeSegments(initialHeadCell);
-        SnapWorldPositionsImmediate();
+        Vector3 currentHeadWorld = headTransform.position;
+        Vector2Int headCell = _gridManager.WorldToGrid(currentHeadWorld);
+
+        _cells.Clear();
+        _segments.Clear();
+
+
+        _cells.Add(headCell);
+        _segments.Add(headTransform);
+        InitializeBusConfigColor(data);
+        ApplyColorToRenderer(headTransform);
+
+        CreateTailCells(data, headCell);
+
+        busSeats.AddSeatPointToList();
+
+        SnapWorldPositions();
         UpdateRotation();
-        _pointerTargetCell = initialHeadCell;
+
+        _pointerTargetCell = headCell;
     }
 
+// Sets the color configuration for the bus based on the provided level data.
+    private void InitializeBusConfigColor(LevelData.BusData data)
+    {
+        busConfig.InitializeBusBusPassageColorEnums(data.busColor);
+    }
+
+    // Creates the tail segments of the bus according to the level data configuration.
+    private void CreateTailCells(LevelData.BusData data, Vector2Int headCell)
+    {
+        for (int i = 0; i < data.cells.Count; i++)
+        {
+            Vector2Int offset = data.cells[i];
+            if (offset == Vector2Int.zero)
+                continue;
+
+            Vector2Int cell = headCell + offset;
+            _cells.Add(cell);
+
+            Vector3 segPos = _gridManager.GridToWorld(cell.x, cell.y);
+            BusSegment seg = Instantiate(busConfig.SegmentPrefab, segPos, Quaternion.identity, segmentRoot);
+            _segments.Add(seg.transform);
+            seg.InitializeBusMovement(this);
+            seg.InitializeBusSeat(busSeats);
+
+            ApplyColorToRenderer(seg.transform);
+        }
+    }
+
+// Applies the bus's configured color to the Renderer material of the segment.
+    private void ApplyColorToRenderer(Transform vehicleMeshes)
+    {
+        var renderer = vehicleMeshes.GetComponentInChildren<Renderer>();
+        if (renderer == null) return;
+
+        var mat = new Material(renderer.material);
+        mat.color = busConfig.BusColor;
+        renderer.material = mat;
+    }
+
+    // Main update loop: handles drag input, checks for move blocking, and performs grid movement steps.
     private void Update()
     {
+        if (_isBlockMove)
+            return;
+
         Vector2 screenPos;
 
         if (GetPointerDown(out screenPos))
@@ -81,6 +133,7 @@ public class BusMovement : MonoBehaviour
         UpdateWorldPositionsLerped();
     }
 
+
     private bool GetPointerDown(out Vector2 pos)
     {
         if (Input.touchCount > 0)
@@ -92,11 +145,13 @@ public class BusMovement : MonoBehaviour
                 return true;
             }
         }
+
         if (Input.GetMouseButtonDown(0))
         {
             pos = Input.mousePosition;
             return true;
         }
+
         pos = default;
         return false;
     }
@@ -112,11 +167,13 @@ public class BusMovement : MonoBehaviour
                 return true;
             }
         }
+
         if (Input.GetMouseButton(0))
         {
             pos = Input.mousePosition;
             return true;
         }
+
         pos = default;
         return false;
     }
@@ -129,12 +186,13 @@ public class BusMovement : MonoBehaviour
             if (t.phase == TouchPhase.Ended || t.phase == TouchPhase.Canceled)
                 return true;
         }
+
         return Input.GetMouseButtonUp(0);
     }
 
     private bool TryGetPointerWorld(Vector2 screenPos, out Vector3 world)
     {
-        Ray ray = _camera.ScreenPointToRay(screenPos);
+        Ray ray = _cam.ScreenPointToRay(screenPos);
 
         if (_dragPlane.Raycast(ray, out float dist))
         {
@@ -146,61 +204,19 @@ public class BusMovement : MonoBehaviour
         return false;
     }
 
-    private Vector2Int SnapHeadToGrid()
-    {
-        Vector2Int snappedCell = _gridManager.WorldToGrid(existingHeadTransform.position);
-        existingHeadTransform.position = _gridManager.GridToWorld(snappedCell.x, snappedCell.y);
-        return snappedCell;
-    }
-
-    private void InitializeSegments(Vector2Int initialHeadCell)
-    {
-        _cells.Clear();
-        _segmentTransforms.Clear();
-
-        Vector2Int currentCellPosition = initialHeadCell;
-
-        for (int i = 0; i < initialSegments.Count; i++)
-        {
-            Vector2Int inputData = initialSegments[i].gridPosition;
-            Transform currentTransform;
-
-            if (i == 0)
-            {
-                currentCellPosition = initialHeadCell;
-                currentTransform = existingHeadTransform;
-            }
-            else
-            {
-                currentCellPosition += inputData;
-                Vector3 startPos = _gridManager.GridToWorld(currentCellPosition.x, currentCellPosition.y);
-                GameObject inst = Instantiate(segmentPrefab, startPos, Quaternion.identity);
-                if (segmentRoot != null)
-                    inst.transform.SetParent(segmentRoot, true);
-                currentTransform = inst.transform;
-            }
-
-            Renderer renderer = currentTransform.GetComponentInChildren<Renderer>();
-            if (renderer != null)
-                renderer.material.color = busColor;
-
-            _cells.Add(currentCellPosition);
-            _segmentTransforms.Add(currentTransform);
-        }
-    }
-
+// Attempts to start dragging the bus if the raycast hits the bus head.
     private void TryStartDrag(Vector2 screenPos)
     {
-        Ray ray = _camera.ScreenPointToRay(screenPos);
+        Ray ray = _cam.ScreenPointToRay(screenPos);
 
         if (Physics.Raycast(ray, out RaycastHit hit, 100f))
         {
-            bool isHeadOrChild = hit.transform == existingHeadTransform || hit.transform.IsChildOf(existingHeadTransform);
+            bool isHeadOrChild = hit.transform == headTransform || hit.transform.IsChildOf(headTransform);
             if (!isHeadOrChild)
                 return;
 
             _dragging = true;
-            _dragPlane = new Plane(Vector3.up, existingHeadTransform.position);
+            _dragPlane = new Plane(Vector3.up, headTransform.position);
 
             if (TryGetPointerWorld(screenPos, out Vector3 worldPos))
                 _pointerTargetCell = _gridManager.WorldToGrid(worldPos);
@@ -217,10 +233,10 @@ public class BusMovement : MonoBehaviour
         _pointerTargetCell = _gridManager.WorldToGrid(worldPos);
     }
 
+// Attempts to move the bus one grid unit closer to the target cell if conditions are met.
     private void StepTowardsPointer()
     {
         Vector2Int deltaCell = _pointerTargetCell - _cells[0];
-
         if (deltaCell == Vector2Int.zero)
             return;
 
@@ -239,7 +255,6 @@ public class BusMovement : MonoBehaviour
         }
 
         Vector2Int targetHeadCell = _cells[0] + moveDir;
-
         targetHeadCell.x = Mathf.Clamp(targetHeadCell.x, 0, _gridManager.Width - 1);
         targetHeadCell.y = Mathf.Clamp(targetHeadCell.y, 0, _gridManager.Height - 1);
 
@@ -273,22 +288,24 @@ public class BusMovement : MonoBehaviour
         _dragging = false;
     }
 
-    private void SnapWorldPositionsImmediate()
+// Snaps all bus segments instantly to their current target grid world positions.
+    private void SnapWorldPositions()
     {
         for (int i = 0; i < _cells.Count; i++)
         {
             Vector3 pos = _gridManager.GridToWorld(_cells[i].x, _cells[i].y);
-            _segmentTransforms[i].position = pos;
+            _segments[i].position = pos;
         }
     }
 
+// Smoothly moves all bus segments towards their current target grid world positions using Lerp.
     private void UpdateWorldPositionsLerped()
     {
         for (int i = 0; i < _cells.Count; i++)
         {
             Vector3 targetPos = _gridManager.GridToWorld(_cells[i].x, _cells[i].y);
-            _segmentTransforms[i].position = Vector3.Lerp(
-                _segmentTransforms[i].position,
+            _segments[i].position = Vector3.Lerp(
+                _segments[i].position,
                 targetPos,
                 Time.deltaTime * dragLerp
             );
@@ -297,25 +314,22 @@ public class BusMovement : MonoBehaviour
 
     private void UpdateRotation()
     {
-        if (_cells.Count < 2) 
+        if (_cells.Count < 2)
             return;
 
-        // HEAD
         Vector2Int headDir = _cells[0] - _cells[1];
-        _segmentTransforms[0].rotation = Quaternion.Euler(0f, DirectionToAngle(headDir), 0f);
+        _segments[0].rotation = Quaternion.Euler(0f, DirectionToAngle(headDir), 0f);
 
-        // TAIL
         for (int i = 1; i < _cells.Count; i++)
         {
             Vector2Int dir;
-
             if (i == _cells.Count - 1)
-                dir = _cells[i - 1] - _cells[i];       
+                dir = _cells[i - 1] - _cells[i];
             else
-                dir = _cells[i] - _cells[i + 1];        
+                dir = _cells[i] - _cells[i + 1];
 
             float angle = DirectionToAngle(dir);
-            _segmentTransforms[i].rotation = Quaternion.Euler(0f, angle, 0f);
+            _segments[i].rotation = Quaternion.Euler(0f, angle, 0f);
         }
     }
 
@@ -327,5 +341,4 @@ public class BusMovement : MonoBehaviour
         if (dir == Vector2Int.left) return 270f;
         return 0f;
     }
-
 }

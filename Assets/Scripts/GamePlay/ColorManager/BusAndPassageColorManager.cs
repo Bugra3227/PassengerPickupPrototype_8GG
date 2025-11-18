@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 public class BusAndPassageColorManager : MonoBehaviour
 {
+    // Defines the common colors used for both buses and passenger passages.
     public enum BusPassageColors
     {
         Red = 0,
@@ -33,7 +34,7 @@ public class BusAndPassageColorManager : MonoBehaviour
         }
     }
 
-   
+    // Returns the defined Unity Color object corresponding to the provided BusPassageColors enum value.
     public Color GetColor(BusPassageColors colorType)
     {
         switch (colorType)
