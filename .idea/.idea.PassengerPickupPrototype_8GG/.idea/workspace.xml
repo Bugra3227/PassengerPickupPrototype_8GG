@@ -11,9 +11,6 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="mock:///Dummy.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Dummy.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Scripts/AuthoringManager/AuthoringManager.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Core/Level/BusConfig.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Data/GameLoadData.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Data/MainSaveLoadData.cs" root0="FORCE_HIGHLIGHTING" />
@@ -26,6 +23,7 @@
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/GamePlay/ColorManager/BusAndPassageColorManager.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/GamePlay/Passage/PassageController.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/GamePlay/Passage/PassengerPickupZone.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/GamePlay/SceneManagerControlle/SceneManagerController.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="ProjectId" id="35Z9nqscECkd7Bac1vSVWcbFUhR" />
   <component name="ProjectViewState">
@@ -94,6 +92,7 @@
       <workItem from="1763306901641" duration="8555000" />
       <workItem from="1763371153446" duration="34181000" />
       <workItem from="1763448879335" duration="28582000" />
+      <workItem from="1763489169882" duration="7297000" />
     </task>
     <servers />
   </component>

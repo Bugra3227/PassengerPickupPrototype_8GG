@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class LevelManager : MonoBehaviour
 {
+    
     [SerializeField] private List<LevelData> allLevelData = new List<LevelData>();
     
     [SerializeField] private GridManager gridManager;
@@ -12,7 +13,9 @@ public class LevelManager : MonoBehaviour
     [SerializeField] private BusManager busManager;
 
     [SerializeField] private PassageManager passageManager;
-
+    
+    public event Action OnLevelGoalAchieved;
+    
     private int _lvlCount;
     private LevelData _currentLevelData;
 
@@ -24,6 +27,7 @@ public class LevelManager : MonoBehaviour
         InitializeGridManagerState();
         InitializeBusConfig();
         InitializePassageConfig();
+        InitializeGameProperties();
     }
 
 
@@ -51,11 +55,32 @@ public class LevelManager : MonoBehaviour
     private void InitializeBusConfig()
     {
         busManager.Initialize(_currentLevelData);
+        if (busManager != null)
+        {
+            busManager.OnBusStatusChanged += CheckLevelCompletion;
+        }
     }
 
     // Passes the level configuration to the PassageManager (for passengers).
     private void InitializePassageConfig()
     {
         passageManager.Initialize(_currentLevelData);
+    }
+    //InitializeGameTime
+    private void InitializeGameProperties()
+    {
+        float getCurrentTime = _currentLevelData.LevelDuration;
+        GameManager.Instance.InitializeGameProperties(getCurrentTime,_lvlCount);
+        GameManager.Instance.InitializeUILevelText();
+        
+    }
+    //Check Level Completion
+    public void CheckLevelCompletion()
+    {
+       
+        if (busManager.AllBusesAreCompleted()) 
+        {
+            OnLevelGoalAchieved?.Invoke();
+        }
     }
 }

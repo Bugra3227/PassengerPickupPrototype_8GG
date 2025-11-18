@@ -14,6 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   width: 5
   height: 5
+  levelDuration: 90
   blocks: []
   worldObjects: []
+  passengerSpawns: []
   buses: []
