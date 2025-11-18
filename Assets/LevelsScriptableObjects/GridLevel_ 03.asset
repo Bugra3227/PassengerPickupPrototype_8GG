@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   width: 5
   height: 7
+  levelDuration: 40
   blocks:
   - cell: {x: 2, y: 3}
     blockId: 1

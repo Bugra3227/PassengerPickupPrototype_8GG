@@ -98,6 +98,7 @@ public class BusSeats : MonoBehaviour
             }
             effectSound.Play();
             Destroy(gameObject,0.25f);
+            BusManager.Instance.IncreaseTotalFullBus();
             
         });
     }

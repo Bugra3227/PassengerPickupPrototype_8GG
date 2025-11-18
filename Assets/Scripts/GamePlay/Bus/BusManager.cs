@@ -1,8 +1,10 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class BusManager : MonoBehaviour
 {
+    public static BusManager Instance{ get; private set; }
     [SerializeField] private BusController busPrefab;
     [SerializeField] private Transform busesRoot;
 
@@ -11,6 +13,13 @@ public class BusManager : MonoBehaviour
     public IReadOnlyList<BusController> SpawnedBuses => _spawnedBuses;
 
     private GridManager _gridManager;
+
+    private int _totalFullBus;
+    public event Action OnBusStatusChanged;
+    private void Awake()
+    {
+        Instance = this;
+    }
 
     // Initializes the manager,  spawns new buses based on the level data.
     public void Initialize(LevelData levelData)
@@ -62,5 +71,15 @@ public class BusManager : MonoBehaviour
         }
 
         _spawnedBuses.Clear();
+    }
+// Call Action to All Buses Complete
+    public void IncreaseTotalFullBus()
+    {
+        _totalFullBus++;
+        OnBusStatusChanged?.Invoke();
+    }
+    public bool AllBusesAreCompleted()
+    {
+        return _totalFullBus >= _spawnedBuses.Count;
     }
 }

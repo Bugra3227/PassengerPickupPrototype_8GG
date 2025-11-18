@@ -2,12 +2,8 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-
-
-    // ScriptableObject containing all configuration data required to load and run a single level in the game,
-    // including grid size, obstacle blocks, world objects (like borders and spawns), and initial bus positions.
-
-
+// ScriptableObject containing all configuration data required to load and run a single level in the game,
+// including grid size, obstacle blocks, world objects (like borders and spawns), and initial bus positions.
 
 [CreateAssetMenu(menuName = "Game/Grid Level", fileName = "GridLevel_")]
 public class LevelData : ScriptableObject
@@ -72,6 +68,7 @@ public class LevelData : ScriptableObject
 
     [SerializeField] private int width = 5;
     [SerializeField] private int height = 7;
+    [SerializeField] private float levelDuration;
     [SerializeField] private List<BlockData> blocks = new List<BlockData>();
     [SerializeField] private List<WorldObjectData> worldObjects = new List<WorldObjectData>();
     [SerializeField] private List<PassengerSpawnData> passengerSpawns = new List<PassengerSpawnData>();
@@ -79,6 +76,8 @@ public class LevelData : ScriptableObject
 
     public int Width => width;
     public int Height => height;
+    
+    public float LevelDuration => levelDuration;
     public IReadOnlyList<BlockData> Blocks => blocks;
     public IReadOnlyList<WorldObjectData> WorldObjects => worldObjects;
     public IReadOnlyList<PassengerSpawnData> PassengerSpawns => passengerSpawns;
@@ -107,6 +106,10 @@ public class LevelData : ScriptableObject
     public void SetPassengerSpawns(List<PassengerSpawnData> newSpawns)
     {
         passengerSpawns = newSpawns;
+    }
+    public void SetLevelDuration(float duration) 
+    {
+        levelDuration = duration;
     }
 #endif
 }
