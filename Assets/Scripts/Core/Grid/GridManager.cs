@@ -25,7 +25,7 @@ public class GridManager : MonoBehaviour
         public GameObject prefab;
     }
 
-    [SerializeField] private LevelData levelData;
+    
     [SerializeField] private float cellSize = 1f;
     [SerializeField] private GameObject cellPrefab;
     [SerializeField] private Transform cellsRoot;
@@ -34,11 +34,11 @@ public class GridManager : MonoBehaviour
     [SerializeField] private List<BlockPrefabEntry> blockPrefabs = new List<BlockPrefabEntry>();
     [SerializeField] private List<WorldPrefabEntry> worldPrefabs = new List<WorldPrefabEntry>();
 
-    public int Width => levelData != null ? levelData.Width : 0;
-    public int Height => levelData != null ? levelData.Height : 0;
+    public int Width => _levelData != null ? _levelData.Width : 0;
+    public int Height => _levelData != null ? _levelData.Height : 0;
     public float CellSize => cellSize;
-    public LevelData LevelData => levelData;
-
+    public LevelData LevelData => _levelData;
+    private LevelData _levelData;
     private float _offsetX;
     private float _offsetZ;
 
@@ -48,14 +48,6 @@ public class GridManager : MonoBehaviour
     private void OnEnable()
     {
         Instance = this;
-        BuildPrefabLookups();
-
-        if (Application.isPlaying)
-        {
-            RebuildGrid();
-            SpawnBlocks();
-            SpawnWorldObjects();
-        }
     }
 
     private void OnDisable()
@@ -63,7 +55,20 @@ public class GridManager : MonoBehaviour
         if (Instance == this)
             Instance = null;
     }
-
+// Sets up the grid environment: builds prefab dictionaries, creates grid cells, and spawns objects.
+    public void CreateGridState()
+    {
+        BuildPrefabLookups();
+        RebuildGrid();
+        SpawnBlocks();
+        SpawnWorldObjects();
+    }
+// Stores the provided LevelData for use by the manager.
+    public void InitializeLevelData(LevelData data)
+    {
+        _levelData = data;
+    }
+// Creates dictionary lookups to quickly find the correct prefab using the block/world object ID.
     private void BuildPrefabLookups()
     {
         if (_blockPrefabLookup == null)
@@ -97,20 +102,21 @@ public class GridManager : MonoBehaviour
                 _worldPrefabLookup.Add(key, entry.prefab);
         }
     }
-
+// Destroys old grid cells and instantiates new ones based on the current level dimensions (Width/Height).
     public void RebuildGrid()
     {
-        if (levelData == null || cellPrefab == null || cellsRoot == null)
+        
+        if (_levelData == null || cellPrefab == null || cellsRoot == null)
             return;
-
+      
         ClearChildren(cellsRoot);
 
-        _offsetX = -(levelData.Width - 1) * 0.5f * cellSize;
-        _offsetZ = -(levelData.Height - 1) * 0.5f * cellSize;
+        _offsetX = -(_levelData.Width - 1) * 0.5f * cellSize;
+        _offsetZ = -(_levelData.Height - 1) * 0.5f * cellSize;
 
-        for (int y = 0; y < levelData.Height; y++)
+        for (int y = 0; y < _levelData.Height; y++)
         {
-            for (int x = 0; x < levelData.Width; x++)
+            for (int x = 0; x < _levelData.Width; x++)
             {
                 Vector3 pos = GridToWorld(x, y);
 
@@ -130,15 +136,15 @@ public class GridManager : MonoBehaviour
             }
         }
     }
-
-    public void SpawnBlocks()
+// Clears old blocks and spawns new block prefabs based on the LevelData.Blocks list.
+    private void SpawnBlocks()
     {
-        if (levelData == null)
+        if (_levelData == null)
             return;
 
         ClearChildren(blocksRoot);
 
-        IReadOnlyList<LevelData.BlockData> blocks = levelData.Blocks;
+        IReadOnlyList<LevelData.BlockData> blocks = _levelData.Blocks;
         for (int i = 0; i < blocks.Count; i++)
         {
             LevelData.BlockData b = blocks[i];
@@ -150,15 +156,15 @@ public class GridManager : MonoBehaviour
             Instantiate(prefab, pos, rot, blocksRoot);
         }
     }
-
-    public void SpawnWorldObjects()
+// Clears old world objects and spawns new prefabs based on the LevelData.WorldObjects list.
+    private void SpawnWorldObjects()
     {
-        if (levelData == null)
+        if (_levelData == null)
             return;
 
         ClearChildren(worldObjectsRoot);
 
-        IReadOnlyList<LevelData.WorldObjectData> objs = levelData.WorldObjects;
+        IReadOnlyList<LevelData.WorldObjectData> objs = _levelData.WorldObjects;
         for (int i = 0; i < objs.Count; i++)
         {
             LevelData.WorldObjectData o = objs[i];
@@ -172,7 +178,7 @@ public class GridManager : MonoBehaviour
             Instantiate(prefab, pos, rot, worldObjectsRoot);
         }
     }
-
+// Destroys all child GameObjects under the specified root Transform
     private void ClearChildren(Transform root)
     {
         if (root == null)
@@ -198,6 +204,7 @@ public class GridManager : MonoBehaviour
         Vector3 local = new Vector3(_offsetX + x * cellSize, 0f, _offsetZ + y * cellSize);
         return transform.position + local;
     }
+
     public bool IsCellBlocked(Vector2Int cell)
     {
         if (LevelData == null)
@@ -221,9 +228,9 @@ public class GridManager : MonoBehaviour
 
         int ix = Mathf.RoundToInt(gx);
         int iy = Mathf.RoundToInt(gy);
-
-        ix = Mathf.Clamp(ix, 0, levelData.Width - 1);
-        iy = Mathf.Clamp(iy, 0, levelData.Height - 1);
+        
+        ix = Mathf.Clamp(ix, 0, _levelData.Width - 1);
+        iy = Mathf.Clamp(iy, 0, _levelData.Height - 1);
 
         return new Vector2Int(ix, iy);
     }
