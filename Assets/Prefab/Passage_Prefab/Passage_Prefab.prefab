@@ -199,8 +199,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   passageController: {fileID: 6021025111245712674}
   jumpPower: 1
-  jumpDuration: 0.7
-  pickupDelay: 0.1
+  jumpDuration: 0.4
+  pickupDelay: 0.01
 --- !u!54 &4142933909075271986
 Rigidbody:
   m_ObjectHideFlags: 0

@@ -41,7 +41,8 @@ public class UIManager : MonoBehaviour
     }
     public void InitializeLevelText(int lvl)
     {
-        levelTextMeshProUGUI.text = "level "+lvl+1;
+        int levelCount = lvl + 1;
+        levelTextMeshProUGUI.text = "level "+levelCount;
     }
     
 }

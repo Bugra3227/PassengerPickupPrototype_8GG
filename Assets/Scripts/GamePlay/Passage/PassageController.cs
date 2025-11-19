@@ -69,13 +69,13 @@ public class PassageController : MonoBehaviour
         foreach (var group in passageData.coloredPassageCounts)
         {
             Color targetColor = _busAndPassageColorManager.GetColor(group.passageColor);
-
+            Quaternion rotation = transform.rotation;
             for (int i = 0; i < group.passageCount; i++)
             {
                 Passenger newPassenger = Instantiate(
                     passengerPrefab,
                     currentSpawnPosition,
-                    Quaternion.identity,
+                    rotation,
                     spawnRoot
                 );
 
@@ -99,7 +99,7 @@ public class PassageController : MonoBehaviour
         if (frontPassenger.PassageColorType == colorType)
         {
             _spawnedPassengers.RemoveAt(0);
-
+            
 
             RebuildQueuePositions();
 
@@ -118,11 +118,14 @@ public class PassageController : MonoBehaviour
         for (int i = 0; i < _spawnedPassengers.Count; i++)
         {
             Passenger passenger = _spawnedPassengers[i];
-
             passenger.transform.DOKill();
-
-            passenger.transform.DOMove(currentTargetPos, 0.5f)
-                .SetEase(Ease.InQuad);
+            passenger.PlayWalkAnimation();
+             
+            passenger.transform.DOMove(currentTargetPos, 0.25f)
+                .SetEase(Ease.InQuad).OnComplete(() =>
+                {
+                    passenger.StopWalkAnimation();
+                });
             currentTargetPos -= spawnOffset;
         }
     }

@@ -35,7 +35,7 @@ public class PassengerPickupZone : MonoBehaviour
             return;
 
         _currentBusTrigger = pickUpTrigger;
-        Debug.Log(_currentBusTrigger);
+       
     }
     //  collider exit the pickup zone.
     private void OnTriggerExit(Collider other)
@@ -76,15 +76,17 @@ public class PassengerPickupZone : MonoBehaviour
                 break;
 
 
-            busMovement.IsBlockMove = true;
+            
             Passenger passenger = passageController.GetNextPassengerForColor(busSeats.BusPassageColorEnum);
             if (passenger == null)
                 break;
 
-
+            busMovement.IsBlockMove = true;
+            passenger.PlayJumpAnimation();
+            passenger.PlaySittingAnimation();
             passenger.JumpIntoSeat(seat, jumpPower, jumpDuration);
 
-            yield return new WaitForSeconds(pickupDelay);
+            yield return new WaitForSeconds(jumpDuration + pickupDelay);
         }
 
         _isPicking = false;

@@ -41,7 +41,7 @@ public class GridManager : MonoBehaviour
     private LevelData _levelData;
     private float _offsetX;
     private float _offsetZ;
-
+    private readonly List<BusMovement> _buses = new List<BusMovement>();
     private Dictionary<int, GameObject> _blockPrefabLookup;
     private Dictionary<(LevelData.LevelWorldObjectType, int), GameObject> _worldPrefabLookup;
 
@@ -233,6 +233,35 @@ public class GridManager : MonoBehaviour
         iy = Mathf.Clamp(iy, 0, _levelData.Height - 1);
 
         return new Vector2Int(ix, iy);
+    }
+    public void RegisterBus(BusMovement bus)
+    {
+        if (!_buses.Contains(bus))
+            _buses.Add(bus);
+    }
+
+    public void UnregisterBus(BusMovement bus)
+    {
+        _buses.Remove(bus);
+    }
+
+    public bool IsCellOccupiedByBus(Vector2Int cell, BusMovement ignoreBus = null)
+    {
+        for (int i = 0; i < _buses.Count; i++)
+        {
+            BusMovement bus = _buses[i];
+            if (bus == null || bus == ignoreBus)
+                continue;
+
+            var cells = bus._cells;
+            for (int j = 0; j < cells.Count; j++)
+            {
+                if (cells[j] == cell)
+                    return true;
+            }
+        }
+
+        return false;
     }
 
 #if UNITY_EDITOR
