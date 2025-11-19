@@ -29,12 +29,21 @@ public class BusMovement : MonoBehaviour
     private Plane _dragPlane;
     private bool _isBlockMove;
     private bool _dragging;
-  
+
     private readonly List<Transform> _segments = new(); // head + tails
 
     private Vector2Int _pointerTargetCell;
     private float _stepTimer;
-    
+
+    private enum ControlMode
+    {
+        None,
+        Head,
+        Tail
+    }
+
+    private ControlMode _controlMode = ControlMode.None;
+
     private void OnDisable()
     {
         _gridManager.UnregisterBus(this);
@@ -131,11 +140,102 @@ public class BusMovement : MonoBehaviour
             if (_stepTimer >= stepInterval)
             {
                 _stepTimer = 0f;
-                StepTowardsPointer();
+                if (_controlMode == ControlMode.Head)
+                {
+                    StepFromHead();
+                    VibrateLight();
+                }
+                else if (_controlMode == ControlMode.Tail)
+                {
+                    StepFromTail();
+                    VibrateLight();
+                }
+                   
+               
+                    
+
             }
         }
 
         UpdateWorldPositionsLerped();
+    }
+    private void StepFromHead()
+    {
+        Vector2Int deltaCell = _pointerTargetCell - _cells[0];
+        if (deltaCell == Vector2Int.zero)
+            return;
+
+        Vector2Int moveDir;
+
+        if (Mathf.Abs(deltaCell.x) > Mathf.Abs(deltaCell.y))
+            moveDir = deltaCell.x > 0 ? Vector2Int.right : Vector2Int.left;
+        else
+            moveDir = deltaCell.y > 0 ? Vector2Int.up : Vector2Int.down;
+
+        if (_cells.Count > 1)
+        {
+            Vector2Int backwardDir = _cells[1] - _cells[0];
+            if (moveDir == backwardDir)
+                return;
+        }
+
+        Vector2Int target = _cells[0] + moveDir;
+        target.x = Mathf.Clamp(target.x, 0, _gridManager.Width - 1);
+        target.y = Mathf.Clamp(target.y, 0, _gridManager.Height - 1);
+
+        if (_cells.Contains(target))
+            return;
+
+        if (IsBlockedCell(target))
+            return;
+
+        for (int i = _cells.Count - 1; i > 0; i--)
+            _cells[i] = _cells[i - 1];
+
+        _cells[0] = target;
+        UpdateRotation();
+    }
+    private void StepFromTail()
+    {
+        int tailIndex = _cells.Count - 1;
+        Vector2Int tailCell = _cells[tailIndex];
+
+        Vector2Int deltaCell = _pointerTargetCell - tailCell;
+        if (deltaCell == Vector2Int.zero)
+            return;
+
+        Vector2Int moveDir;
+
+        if (Mathf.Abs(deltaCell.x) > Mathf.Abs(deltaCell.y))
+            moveDir = deltaCell.x > 0 ? Vector2Int.right : Vector2Int.left;
+        else
+            moveDir = deltaCell.y > 0 ? Vector2Int.up : Vector2Int.down;
+
+       
+        if (_cells.Count > 1)
+        {
+            Vector2Int backwardDir = _cells[tailIndex - 1] - tailCell;
+            if (moveDir == backwardDir)
+                return;
+        }
+
+        Vector2Int target = tailCell + moveDir;
+        target.x = Mathf.Clamp(target.x, 0, _gridManager.Width - 1);
+        target.y = Mathf.Clamp(target.y, 0, _gridManager.Height - 1);
+
+        if (_cells.Contains(target))
+            return;
+
+        if (IsBlockedCell(target))
+            return;
+
+        
+        for (int i = 0; i < _cells.Count - 1; i++)
+            _cells[i] = _cells[i + 1];
+
+        _cells[tailIndex] = target;
+
+        UpdateRotation();
     }
 
 
@@ -216,12 +316,23 @@ public class BusMovement : MonoBehaviour
 
         if (Physics.Raycast(ray, out RaycastHit hit, 100f))
         {
-            bool isHeadOrChild = hit.transform == headTransform || hit.transform.IsChildOf(headTransform);
-            if (!isHeadOrChild)
+            Transform tail = _segments[_segments.Count - 1];
+
+            if (hit.transform == headTransform || hit.transform.IsChildOf(headTransform))
+            {
+                _controlMode = ControlMode.Head;
+            }
+            else if (hit.transform == tail || hit.transform.IsChildOf(tail))
+            {
+                _controlMode = ControlMode.Tail;
+            }
+            else
+            {
                 return;
+            }
 
             _dragging = true;
-            _dragPlane = new Plane(Vector3.up, headTransform.position);
+            _dragPlane = new Plane(Vector3.up, hit.point);
 
             if (TryGetPointerWorld(screenPos, out Vector3 worldPos))
                 _pointerTargetCell = _gridManager.WorldToGrid(worldPos);
@@ -229,6 +340,7 @@ public class BusMovement : MonoBehaviour
             _stepTimer = 0f;
         }
     }
+
 
     private void UpdatePointerTarget(Vector2 screenPos)
     {
@@ -285,18 +397,17 @@ public class BusMovement : MonoBehaviour
         {
             if (_gridManager.IsCellBlocked(cell))
                 return true;
-            
+
             if (_gridManager.IsCellOccupiedByBus(cell, this))
                 return true;
         }
-        
+
         if (blockMask == 0)
             return false;
 
         Vector3 pos = _gridManager.GridToWorld(cell.x, cell.y) + Vector3.up * 0.1f;
         return Physics.CheckSphere(pos, blockCheckRadius, blockMask);
     }
-
 
 
     private void EndDrag()
@@ -356,5 +467,12 @@ public class BusMovement : MonoBehaviour
         if (dir == Vector2Int.down) return 180f;
         if (dir == Vector2Int.left) return 270f;
         return 0f;
+    }
+    //Haptic
+    public static void VibrateLight()
+    {
+#if UNITY_ANDROID
+        Handheld.Vibrate(); // Android'de bu zaten çok hafif
+#endif
     }
 }
