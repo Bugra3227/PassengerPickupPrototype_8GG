@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -21,27 +22,31 @@ public class BusMovement : MonoBehaviour
 
     [Header("Collision")] [SerializeField] private LayerMask blockMask;
     [SerializeField] private float blockCheckRadius = 0.3f;
-
+    public readonly List<Vector2Int> _cells = new(); // world cell positions (head -> tail)
 
     private GridManager _gridManager;
     private Camera _cam;
     private Plane _dragPlane;
     private bool _isBlockMove;
     private bool _dragging;
-    private readonly List<Vector2Int> _cells = new(); // world cell positions (head -> tail)
+  
     private readonly List<Transform> _segments = new(); // head + tails
 
     private Vector2Int _pointerTargetCell;
     private float _stepTimer;
+    
+    private void OnDisable()
+    {
+        _gridManager.UnregisterBus(this);
+    }
 
-
-// Initializes the bus's position, segments, and color based on the level data.
+    // Initializes the bus's position, segments, and color based on the level data.
     public void InitializeFromData(LevelData.BusData data)
     {
         _cam = Camera.main;
         _gridManager = GridManager.Instance;
 
-
+        _gridManager.RegisterBus(this);
         Vector3 currentHeadWorld = headTransform.position;
         Vector2Int headCell = _gridManager.WorldToGrid(currentHeadWorld);
 
@@ -246,7 +251,7 @@ public class BusMovement : MonoBehaviour
             moveDir = deltaCell.x > 0 ? Vector2Int.right : Vector2Int.left;
         else
             moveDir = deltaCell.y > 0 ? Vector2Int.up : Vector2Int.down;
-
+        //Block backward
         if (_cells.Count > 1)
         {
             Vector2Int backwardDir = _cells[1] - _cells[0];
@@ -276,12 +281,23 @@ public class BusMovement : MonoBehaviour
 
     private bool IsBlockedCell(Vector2Int cell)
     {
+        if (_gridManager != null)
+        {
+            if (_gridManager.IsCellBlocked(cell))
+                return true;
+            
+            if (_gridManager.IsCellOccupiedByBus(cell, this))
+                return true;
+        }
+        
         if (blockMask == 0)
             return false;
 
         Vector3 pos = _gridManager.GridToWorld(cell.x, cell.y) + Vector3.up * 0.1f;
         return Physics.CheckSphere(pos, blockCheckRadius, blockMask);
     }
+
+
 
     private void EndDrag()
     {
