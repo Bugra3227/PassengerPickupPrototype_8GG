@@ -3151,7 +3151,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b659a5aff7f0344b97f57173a20967f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  levelData: {fileID: 11400000, guid: 9732bd3df9d4fa942a320480a6261567, type: 2}
+  levelData: {fileID: 11400000, guid: c3076012938e1f544b0f993b48680238, type: 2}
   gridLevelAuthoring: {fileID: 635106835}
   worldObjectsAuthoring: {fileID: 635106836}
   busAuthoring: {fileID: 635106837}
@@ -9993,6 +9993,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4308876246424193828, guid: 7e03ec2f24b03d543b2c009c9b91a5dc, type: 3}
+      propertyPath: allLevelData.Array.data[0]
+      value: 
+      objectReference: {fileID: 11400000, guid: c3076012938e1f544b0f993b48680238, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
