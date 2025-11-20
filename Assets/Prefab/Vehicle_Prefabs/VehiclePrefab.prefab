@@ -232,6 +232,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   busConfig: {fileID: 6347210762444393096}
+  busMovement: {fileID: 6152109794325372797}
   effectTransform: {fileID: 3390391550728535275}
   effectSound: {fileID: 7541482779661295658}
   jumpHeight: 1
@@ -523,8 +524,8 @@ MonoBehaviour:
   segmentRoot: {fileID: 6116757780113521260}
   busSeats: {fileID: 1185273960000545758}
   busConfig: {fileID: 6347210762444393096}
-  dragLerp: 10
-  stepInterval: 0.1
+  dragLerp: 13
+  stepInterval: 0.05
   blockMask:
     serializedVersion: 2
     m_Bits: 0

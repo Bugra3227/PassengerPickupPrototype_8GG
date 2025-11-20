@@ -10,6 +10,7 @@ public class BusSeats : MonoBehaviour
 {
     [Header("Seat Management")] private readonly List<BusSeatPoint> seats = new List<BusSeatPoint>();
     [SerializeField] private BusConfig busConfig;
+    [SerializeField] private BusMovement busMovement;
     [SerializeField] private Transform effectTransform;
     [SerializeField] private AudioSource effectSound;
 
@@ -76,8 +77,8 @@ public class BusSeats : MonoBehaviour
 
     private void StartDisappearEffect()
     {
-       
-    
+
+        busMovement.IsBlockMove = true;
         float originalY = transform.position.y;
         float moveUpDuration = jumpDuration * 0.5f; 
 

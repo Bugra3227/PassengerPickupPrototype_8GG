@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class LevelManager : MonoBehaviour
 {
@@ -17,6 +18,7 @@ public class LevelManager : MonoBehaviour
     public event Action OnLevelGoalAchieved;
     
     private int _lvlCount;
+    private int _lvlnumber;
     private LevelData _currentLevelData;
 
 
@@ -35,6 +37,9 @@ public class LevelManager : MonoBehaviour
     private void InitializeLevelData()
     {
         _lvlCount = MainSaveLoad.instance.levelCount;
+        _lvlnumber = _lvlCount;
+        if (_lvlCount > allLevelData.Count-1)
+            _lvlCount = Random.Range(0, allLevelData.Count);
         _currentLevelData = allLevelData[_lvlCount];
     }
 
@@ -70,7 +75,7 @@ public class LevelManager : MonoBehaviour
     private void InitializeGameProperties()
     {
         float getCurrentTime = _currentLevelData.LevelDuration;
-        GameManager.Instance.InitializeGameProperties(getCurrentTime,_lvlCount);
+        GameManager.Instance.InitializeGameProperties(getCurrentTime,_lvlnumber);
         GameManager.Instance.InitializeUILevelText();
         
     }

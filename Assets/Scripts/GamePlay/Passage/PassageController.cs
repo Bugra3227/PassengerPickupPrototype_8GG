@@ -10,6 +10,8 @@ public class PassageController : MonoBehaviour
 
     [SerializeField] private Passenger passengerPrefab;
 
+    [SerializeField] private MeshRenderer passageColorRenderer;
+
     [Header("Spawn Settings")] [SerializeField]
     private Transform spawnRoot;
 
@@ -69,6 +71,7 @@ public class PassageController : MonoBehaviour
         foreach (var group in passageData.coloredPassageCounts)
         {
             Color targetColor = _busAndPassageColorManager.GetColor(group.passageColor);
+
             Quaternion rotation = transform.rotation;
             for (int i = 0; i < group.passageCount; i++)
             {
@@ -81,10 +84,12 @@ public class PassageController : MonoBehaviour
 
                 newPassenger.InitializePassengerColor(group.passageColor, targetColor);
                 _spawnedPassengers.Add(newPassenger);
-
-                currentSpawnPosition -= spawnOffset;
+               
+                currentSpawnPosition += -spawnRoot.forward * spawnOffset.magnitude;
             }
         }
+
+        passageColorRenderer.materials[1].color = _spawnedPassengers[0].PassengerColor;
     }
 
     public Passenger GetNextPassengerForColor(BusAndPassageColorManager.BusPassageColors colorType)
@@ -99,7 +104,7 @@ public class PassageController : MonoBehaviour
         if (frontPassenger.PassageColorType == colorType)
         {
             _spawnedPassengers.RemoveAt(0);
-            
+
 
             RebuildQueuePositions();
 
@@ -120,13 +125,14 @@ public class PassageController : MonoBehaviour
             Passenger passenger = _spawnedPassengers[i];
             passenger.transform.DOKill();
             passenger.PlayWalkAnimation();
-             
             passenger.transform.DOMove(currentTargetPos, 0.25f)
-                .SetEase(Ease.InQuad).OnComplete(() =>
-                {
-                    passenger.StopWalkAnimation();
-                });
-            currentTargetPos -= spawnOffset;
+                .SetEase(Ease.InQuad).OnComplete(() => { passenger.StopWalkAnimation(); });
+            currentTargetPos += -spawnRoot.forward * spawnOffset.magnitude;
         }
+
+        if (_spawnedPassengers.Count > 0)
+            passageColorRenderer.materials[1].color = _spawnedPassengers[0].PassengerColor;
+        else 
+            passageColorRenderer.materials[1].color = Color.grey;
     }
 }

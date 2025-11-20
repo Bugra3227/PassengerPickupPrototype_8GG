@@ -65,6 +65,7 @@ MonoBehaviour:
   passageData:
     coloredPassageCounts: []
   passengerPrefab: {fileID: 516976749287365829, guid: afe67d88db1153b4dbea0c4593a50b60, type: 3}
+  passageColorRenderer: {fileID: 3351689274251071606}
   spawnRoot: {fileID: 2723550745306900454}
   spawnOffset: {x: 0, y: 0, z: -0.75}
 --- !u!1 &3204214427957676724
@@ -283,7 +284,7 @@ PrefabInstance:
     - target: {fileID: -7511558181221131132, guid: 1ea58060f5526834e8b5b0ff38389101, type: 3}
       propertyPath: m_Materials.Array.data[1]
       value: 
-      objectReference: {fileID: 2100000, guid: bc144cefd9ba6d741a95203b905091f5, type: 2}
+      objectReference: {fileID: 2100000, guid: 60105956cd8abdd40a912b613aef8874, type: 2}
     - target: {fileID: -7511558181221131132, guid: 1ea58060f5526834e8b5b0ff38389101, type: 3}
       propertyPath: m_Materials.Array.data[2]
       value: 
@@ -297,6 +298,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1ea58060f5526834e8b5b0ff38389101, type: 3}
+--- !u!23 &3351689274251071606 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -7511558181221131132, guid: 1ea58060f5526834e8b5b0ff38389101, type: 3}
+  m_PrefabInstance: {fileID: 4125862419989417202}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &4524071982532602649 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 1ea58060f5526834e8b5b0ff38389101, type: 3}

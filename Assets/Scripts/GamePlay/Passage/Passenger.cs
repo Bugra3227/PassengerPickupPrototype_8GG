@@ -3,6 +3,7 @@ using DG.Tweening;
 
 public class Passenger : MonoBehaviour
 {
+    public Color PassengerColor => _passengerColor;
     [SerializeField] private SkinnedMeshRenderer meshRenderer;
     [SerializeField] private Animator animator;
     [SerializeField] private BusAndPassageColorManager.BusPassageColors passageColorType;
@@ -15,19 +16,14 @@ public class Passenger : MonoBehaviour
     private static readonly int SittingIdle = Animator.StringToHash("SittingIdle");
     private static readonly int Walk = Animator.StringToHash("Walk");
     private static readonly int Walking = Animator.StringToHash("Walking");
-
+   
     public BusAndPassageColorManager.BusPassageColors PassageColorType => passageColorType;
 
     public void InitializePassengerColor(BusAndPassageColorManager.BusPassageColors type, Color color)
     {
         passageColorType = type;
         _passengerColor = color;
-
-        if (meshRenderer != null)
-        {
-            meshRenderer.material = new Material(meshRenderer.material);
-            meshRenderer.material.color = color;
-        }
+        meshRenderer.material.color = color;
     }
 
     public void JumpIntoSeat(BusSeatPoint seatPoint, float jumpPower, float duration)
@@ -39,8 +35,6 @@ public class Passenger : MonoBehaviour
         _isMoving = true;
         transform.DOKill();
 
-        
-      
 
         transform.SetParent(seatPoint.transform, true);
 
@@ -48,7 +42,7 @@ public class Passenger : MonoBehaviour
         Vector3 targetLocalPos = Vector3.zero;
         Quaternion targetLocalRot = Quaternion.identity;
 
-        
+
         Sequence seq = DOTween.Sequence();
 
         seq.OnStart(PlayJumpAnimation);
@@ -60,7 +54,7 @@ public class Passenger : MonoBehaviour
 
 
         seq.Join(transform.DOLocalRotateQuaternion(targetLocalRot, duration * 0.5f));
-       
+
         seq.OnComplete(() =>
         {
             transform.localPosition = targetLocalPos;

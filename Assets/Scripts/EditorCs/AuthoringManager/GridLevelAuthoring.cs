@@ -11,6 +11,7 @@ public class GridLevelAuthoring : MonoBehaviour
     [SerializeField] private GridManager gridManager;
 
 // This is an editor utility script that takes Grid (spawn) data from the scene and saves it to the LevelData ScriptableObject.
+#if UNITY_EDITOR
     public void BakeLevelFromScene(LevelData levelData)
     {
         if (levelData == null || blocksRoot == null)
@@ -59,4 +60,5 @@ public class GridLevelAuthoring : MonoBehaviour
 
         EditorUtility.SetDirty(this);
     }
+#endif
 }

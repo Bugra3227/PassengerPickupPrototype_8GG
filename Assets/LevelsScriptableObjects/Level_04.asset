@@ -1,0 +1,167 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afbafb21a102a8a4f86365a2d73a2ccb, type: 3}
+  m_Name: Level_04
+  m_EditorClassIdentifier: 
+  width: 6
+  height: 6
+  levelDuration: 60
+  blocks:
+  - cell: {x: 2, y: 2}
+    blockId: 1
+    rotationY: 0
+  - cell: {x: 4, y: 1}
+    blockId: 1
+    rotationY: 0
+  - cell: {x: 4, y: 2}
+    blockId: 1
+    rotationY: 180
+  - cell: {x: 2, y: 3}
+    blockId: 1
+    rotationY: 180
+  worldObjects:
+  - type: 0
+    objectId: 0
+    position: {x: -3.138, y: 0, z: 3.107}
+    rotationY: 0
+  - type: 0
+    objectId: 0
+    position: {x: 3.08, y: 0, z: 3.106}
+    rotationY: 90
+  - type: 0
+    objectId: 0
+    position: {x: -3.134, y: 0, z: -3.147}
+    rotationY: 270
+  - type: 0
+    objectId: 1
+    position: {x: -3.1340003, y: 0, z: 1.523}
+    rotationY: 0
+  - type: 0
+    objectId: 1
+    position: {x: -3.1340003, y: 0, z: 2.523}
+    rotationY: 0
+  - type: 0
+    objectId: 1
+    position: {x: -3.1340003, y: 0, z: 0.523}
+    rotationY: 0
+  - type: 0
+    objectId: 1
+    position: {x: -3.1340003, y: 0, z: -0.477}
+    rotationY: 0
+  - type: 0
+    objectId: 1
+    position: {x: 3.063, y: 0, z: -1.4779999}
+    rotationY: 0
+  - type: 0
+    objectId: 1
+    position: {x: 3.063, y: 0, z: -0.47799993}
+    rotationY: 0
+  - type: 0
+    objectId: 1
+    position: {x: 3.063, y: 0, z: 0.5220001}
+    rotationY: 0
+  - type: 0
+    objectId: 1
+    position: {x: 3.063, y: 0, z: 1.5220001}
+    rotationY: 0
+  - type: 0
+    objectId: 1
+    position: {x: 3.063, y: 0, z: -2.478}
+    rotationY: 0
+  - type: 0
+    objectId: 1
+    position: {x: -3.1340003, y: 0, z: -1.477}
+    rotationY: 0
+  - type: 0
+    objectId: 1
+    position: {x: -2.464, y: 0, z: -3.1469998}
+    rotationY: 270
+  - type: 0
+    objectId: 1
+    position: {x: -1.4639999, y: 0, z: -3.1469996}
+    rotationY: 270
+  - type: 0
+    objectId: 1
+    position: {x: -0.46399978, y: 0, z: -3.1469994}
+    rotationY: 270
+  - type: 0
+    objectId: 1
+    position: {x: 0.5360004, y: 0, z: -3.1469991}
+    rotationY: 270
+  - type: 0
+    objectId: 1
+    position: {x: 1.5360005, y: 0, z: -3.146999}
+    rotationY: 270
+  - type: 0
+    objectId: 1
+    position: {x: -2.468, y: 0, z: 3.107}
+    rotationY: 270
+  - type: 0
+    objectId: 1
+    position: {x: -1.4679999, y: 0, z: 3.1070004}
+    rotationY: 270
+  - type: 0
+    objectId: 1
+    position: {x: -0.46799985, y: 0, z: 3.1070006}
+    rotationY: 270
+  - type: 0
+    objectId: 1
+    position: {x: 0.5320003, y: 0, z: 3.1070008}
+    rotationY: 270
+  - type: 0
+    objectId: 1
+    position: {x: 1.5320003, y: 0, z: 3.107001}
+    rotationY: 270
+  - type: 0
+    objectId: 1
+    position: {x: 2.5320003, y: 0, z: 3.1070013}
+    rotationY: 270
+  - type: 0
+    objectId: 1
+    position: {x: -3.1340003, y: 0, z: -2.477}
+    rotationY: 0
+  passengerSpawns:
+  - spawnPosition: {x: 2.54, y: 0, z: -3.18}
+    spawnRotation: {x: -0, y: -0, z: -0, w: 1}
+    groups:
+    - color: 3
+      count: 2
+    - color: 2
+      count: 2
+    - color: 3
+      count: 2
+    - color: 2
+      count: 2
+  - spawnPosition: {x: 3.075, y: 0, z: 2.703}
+    spawnRotation: {x: -0, y: -0.7071068, z: -0, w: 0.7071068}
+    groups:
+    - color: 2
+      count: 1
+    - color: 3
+      count: 2
+    - color: 2
+      count: 1
+  buses:
+  - headBusCell: {x: 4, y: 3}
+    busColor: 3
+    cells:
+    - {x: 0, y: 0}
+    - {x: -1, y: 0}
+    - {x: -1, y: -1}
+    rotationY: 0
+  - headBusCell: {x: 0, y: 3}
+    busColor: 2
+    cells:
+    - {x: 0, y: 0}
+    - {x: 0, y: -1}
+    - {x: 0, y: -2}
+    rotationY: 0

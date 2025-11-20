@@ -10,6 +10,7 @@ public class PassageLevelAuthoring : MonoBehaviour
     [SerializeField] private Transform passagesRoot;
    
     // // This is an editor utility script that takes Passage (spawn) data from the scene and saves it to the LevelData ScriptableObject.
+#if UNITY_EDITOR
     public void BakePassengersFromScene(LevelData levelData)
     {
         if (levelData == null)
@@ -60,4 +61,5 @@ public class PassageLevelAuthoring : MonoBehaviour
 
         Debug.Log($"Passenger spawns baked: {spawns.Count}", this);
     }
+#endif
 }

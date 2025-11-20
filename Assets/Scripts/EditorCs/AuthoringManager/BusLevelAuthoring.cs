@@ -11,6 +11,7 @@ public class BusesLevelAuthoring : MonoBehaviour
     [SerializeField] private GridManager grid;
 
 // This is an editor utility script that takes Bus (spawn) data from the scene and saves it to the LevelData ScriptableObject.
+#if UNITY_EDITOR
     public void BakeBusesFromScene(LevelData levelData)
     {
         if (levelData == null || busesRoot == null)
@@ -53,4 +54,5 @@ public class BusesLevelAuthoring : MonoBehaviour
 
         Debug.Log($"Buses baked: {list.Count}");
     }
+#endif
 }

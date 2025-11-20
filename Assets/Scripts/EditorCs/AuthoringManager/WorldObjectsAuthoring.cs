@@ -10,6 +10,7 @@ public class WorldObjectsAuthoring : MonoBehaviour
     [SerializeField] private Transform worldObjectsRoot;
 
 // This is an editor utility script that takes world objects (spawn) data from the scene and saves it to the LevelData ScriptableObject.
+#if UNITY_EDITOR
     public void BakeWorldObjectsFromScene(LevelData levelData)
     {
         if (levelData == null)
@@ -50,4 +51,24 @@ public class WorldObjectsAuthoring : MonoBehaviour
 
         Debug.Log($"World Objects Baked: {list.Count} obj");
     }
+    [ContextMenu("Bake Level Block In Scene")]
+    public void ClearAllWorldObjectsInScene()
+    {
+        if (worldObjectsRoot == null)
+        {
+            Debug.LogError("WorldObjectsRoot is null!", this);
+            return;
+        }
+
+        // Çocukları temizlerken direkt foreach kullanma, index ters gider.
+        // Güvenli yöntem:
+        for (int i = worldObjectsRoot.childCount - 1; i >= 0; i--)
+        {
+            Transform child = worldObjectsRoot.GetChild(i);
+            Undo.DestroyObjectImmediate(child.gameObject); // Undo destekli silme
+        }
+
+        Debug.Log("All world objects cleared from scene.");
+    }
+#endif
 }

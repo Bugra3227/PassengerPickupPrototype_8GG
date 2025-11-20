@@ -81,7 +81,7 @@ public class PassengerPickupZone : MonoBehaviour
             if (passenger == null)
                 break;
 
-            busMovement.IsBlockMove = true;
+           // busMovement.IsBlockMove = true;
             passenger.PlayJumpAnimation();
             passenger.PlaySittingAnimation();
             passenger.JumpIntoSeat(seat, jumpPower, jumpDuration);

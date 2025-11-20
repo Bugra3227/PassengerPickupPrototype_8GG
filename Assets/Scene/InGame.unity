@@ -3151,13 +3151,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b659a5aff7f0344b97f57173a20967f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  levelData: {fileID: 11400000, guid: c3076012938e1f544b0f993b48680238, type: 2}
+  levelData: {fileID: 11400000, guid: c7e679bddc5c9cd428d83a5a71e8ef51, type: 2}
   gridLevelAuthoring: {fileID: 635106835}
   worldObjectsAuthoring: {fileID: 635106836}
   busAuthoring: {fileID: 635106837}
   passageLevelAuthoring: {fileID: 635106839}
   gridManager: {fileID: 1671614182}
-  timeDurationToBake: 40
+  timeDurationToBake: 70
 --- !u!114 &635106839
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4973,7 +4973,7 @@ Camera:
   far clip plane: 1000
   field of view: 37
   orthographic: 1
-  orthographic size: 7
+  orthographic size: 8.25
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -9994,9 +9994,49 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4308876246424193828, guid: 7e03ec2f24b03d543b2c009c9b91a5dc, type: 3}
+      propertyPath: allLevelData.Array.size
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 4308876246424193828, guid: 7e03ec2f24b03d543b2c009c9b91a5dc, type: 3}
       propertyPath: allLevelData.Array.data[0]
       value: 
+      objectReference: {fileID: 11400000, guid: bb75e7863750bd849a91fae3058fba5e, type: 2}
+    - target: {fileID: 4308876246424193828, guid: 7e03ec2f24b03d543b2c009c9b91a5dc, type: 3}
+      propertyPath: allLevelData.Array.data[1]
+      value: 
+      objectReference: {fileID: 11400000, guid: 9cc0d07f866890b4cbb58272b0fa8716, type: 2}
+    - target: {fileID: 4308876246424193828, guid: 7e03ec2f24b03d543b2c009c9b91a5dc, type: 3}
+      propertyPath: allLevelData.Array.data[2]
+      value: 
+      objectReference: {fileID: 11400000, guid: cd9e6342506c2fa4b90d598995c50e9c, type: 2}
+    - target: {fileID: 4308876246424193828, guid: 7e03ec2f24b03d543b2c009c9b91a5dc, type: 3}
+      propertyPath: allLevelData.Array.data[3]
+      value: 
+      objectReference: {fileID: 11400000, guid: 8f1b9ed8ee50974488bbf8a8ff9da582, type: 2}
+    - target: {fileID: 4308876246424193828, guid: 7e03ec2f24b03d543b2c009c9b91a5dc, type: 3}
+      propertyPath: allLevelData.Array.data[4]
+      value: 
       objectReference: {fileID: 11400000, guid: c3076012938e1f544b0f993b48680238, type: 2}
+    - target: {fileID: 4308876246424193828, guid: 7e03ec2f24b03d543b2c009c9b91a5dc, type: 3}
+      propertyPath: allLevelData.Array.data[5]
+      value: 
+      objectReference: {fileID: 11400000, guid: 7eb5f1a2e17ae06429d7ea6989e02dfc, type: 2}
+    - target: {fileID: 4308876246424193828, guid: 7e03ec2f24b03d543b2c009c9b91a5dc, type: 3}
+      propertyPath: allLevelData.Array.data[6]
+      value: 
+      objectReference: {fileID: 11400000, guid: c7e679bddc5c9cd428d83a5a71e8ef51, type: 2}
+    - target: {fileID: 4448570892267673116, guid: 7e03ec2f24b03d543b2c009c9b91a5dc, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 17.344315
+      objectReference: {fileID: 0}
+    - target: {fileID: 4448570892267673116, guid: 7e03ec2f24b03d543b2c009c9b91a5dc, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.1768
+      objectReference: {fileID: 0}
+    - target: {fileID: 4448570892267673116, guid: 7e03ec2f24b03d543b2c009c9b91a5dc, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 23.536
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
